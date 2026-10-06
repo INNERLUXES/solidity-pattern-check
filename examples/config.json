@@ -1,0 +1,5 @@
+{
+  "name": "Brindlewood Savings Club contracts review",
+  "exclude": ["lib/**", "out/**", "cache/**", "artifacts/**", "mocks/**"],
+  "minCompiler": "0.8.20"
+}

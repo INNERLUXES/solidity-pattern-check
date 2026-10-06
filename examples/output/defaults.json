@@ -1,0 +1,33 @@
+{
+  "name": "built-in defaults",
+  "include": [
+    "**/*.sol"
+  ],
+  "exclude": [
+    "lib/**",
+    "out/**",
+    "cache/**",
+    "artifacts/**"
+  ],
+  "rules": {
+    "floatingPragma": "warning",
+    "oldCompiler": "warning",
+    "txOrigin": "error",
+    "uncheckedCall": "error",
+    "delegatecallTarget": "error",
+    "selfdestruct": "warning",
+    "weakRandomness": "warning",
+    "stateWriteAfterCall": "warning",
+    "adminEvent": "warning",
+    "accessControl": "info",
+    "initializer": "warning",
+    "unboundedLoop": "warning",
+    "ecrecover": "warning",
+    "assembly": "info",
+    "uncheckedBlock": "info",
+    "hardcodedAddress": "info"
+  },
+  "minCompiler": "0.8.0",
+  "minSeverity": "info",
+  "failOn": "error"
+}

@@ -1,0 +1,47 @@
+solidity-pattern-check: examples/clean
+input: 2 Solidity files; 1 other file passed over; 0 folders named .git or node_modules passed over; 0 paths excluded; 0 links not followed
+config: built-in defaults: include **/*.sol; exclude lib/**, out/**, cache/** and artifacts/**; minimum compiler 0.8.0; minimum severity info; fail on error
+rules: floating-pragma (warning); old-compiler (warning); tx-origin-auth (error); unchecked-call (error); delegatecall-untrusted (error); selfdestruct (warning); weak-randomness (warning); state-write-after-call (warning); admin-change-without-event (warning); missing-access-control (info); upgradeable-initializer (warning); unbounded-loop (warning); ecrecover-unchecked (warning); inline-assembly (info); unchecked-block (info); hardcoded-address (info); unreadable-file (error); scan-limit (error)
+findings: 0
+
+Files (2)
+
+  file                                                      contracts  functions  error  warning  info
+  examples/clean/contracts/ShelfRegistry.sol                1          5          0      0        0
+  examples/clean/contracts/upgradeable/ShelfRegistryV2.sol  1          4          0      0        0
+
+Summary
+
+  files: 2 Solidity, with 2 contracts, 0 interfaces and 0 libraries
+  functions: 9, 5 public or external that change state; modifiers: 2; assembly blocks: 0
+  pragma solidity: 2 pinned, 0 floating, 0 missing
+
+Rules (18)
+
+  rule                        level    findings
+  floating-pragma             warning  0
+  old-compiler                warning  0
+  tx-origin-auth              error    0
+  unchecked-call              error    0
+  delegatecall-untrusted      error    0
+  selfdestruct                warning  0
+  weak-randomness             warning  0
+  state-write-after-call      warning  0
+  admin-change-without-event  warning  0
+  missing-access-control      info     0
+  upgradeable-initializer     warning  0
+  unbounded-loop              warning  0
+  ecrecover-unchecked         warning  0
+  inline-assembly             info     0
+  unchecked-block             info     0
+  hardcoded-address           info     0
+  unreadable-file             error    0
+  scan-limit                  error    0
+
+Findings (0)
+
+  none
+
+This check reads the Solidity files on disk as text and compiles nothing, runs nothing and fetches nothing; the checks are a heuristic. A finding is a lead with a file and a line for a smart contract review before an audit, and a clean result is not a security audit and not a guarantee that the contracts are safe (docs/limits.md).
+
+RESULT: PASS - no finding at or above error

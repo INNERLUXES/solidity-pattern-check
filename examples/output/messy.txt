@@ -1,0 +1,142 @@
+solidity-pattern-check: examples/messy
+input: 4 Solidity files; 1 other file passed over; 1 folder named .git or node_modules passed over; 2 paths excluded; 0 links not followed
+config: examples/config.json (Brindlewood Savings Club contracts review): include **/*.sol; exclude lib/**, out/**, cache/**, artifacts/** and mocks/**; minimum compiler 0.8.20; minimum severity info; fail on error
+rules: floating-pragma (warning); old-compiler (warning); tx-origin-auth (error); unchecked-call (error); delegatecall-untrusted (error); selfdestruct (warning); weak-randomness (warning); state-write-after-call (warning); admin-change-without-event (warning); missing-access-control (info); upgradeable-initializer (warning); unbounded-loop (warning); ecrecover-unchecked (warning); inline-assembly (info); unchecked-block (info); hardcoded-address (info); unreadable-file (error); scan-limit (error)
+findings: 23 (5 error, 13 warning, 5 info)
+
+Files (4)
+
+  file                                                  contracts  functions  error  warning  info
+  examples/messy/contracts/ClubVault.sol                1          13         2      6        4
+  examples/messy/contracts/RaffleDraw.sol               1          4          0      4        0
+  examples/messy/contracts/interfaces/IClubToken.sol    1          2          0      0        0
+  examples/messy/contracts/upgradeable/ClubVaultV2.sol  1          6          3      3        1
+
+Summary
+
+  files: 4 Solidity, with 3 contracts, 1 interface and 0 libraries
+  functions: 25, 16 public or external that change state; modifiers: 1; assembly blocks: 1
+  pragma solidity: 2 pinned, 2 floating, 0 missing
+
+Rules (18)
+
+  rule                        level    findings
+  floating-pragma             warning  2
+  old-compiler                warning  2
+  tx-origin-auth              error    1
+  unchecked-call              error    2
+  delegatecall-untrusted      error    2
+  selfdestruct                warning  1
+  weak-randomness             warning  1
+  state-write-after-call      warning  1
+  admin-change-without-event  warning  1
+  missing-access-control      info     2
+  upgradeable-initializer     warning  3
+  unbounded-loop              warning  1
+  ecrecover-unchecked         warning  1
+  inline-assembly             info     1
+  unchecked-block             info     1
+  hardcoded-address           info     1
+  unreadable-file             error    0
+  scan-limit                  error    0
+
+Findings (23)
+
+  ERROR    unchecked-call              examples/messy/contracts/ClubVault.sol:44
+           the result of .send in function payBonus of ClubVault is not used, so a failed call goes on as if it worked
+           fix: check the success value, such as (bool ok, ) = to.call{value: amount}(""); require(ok, "transfer failed");, or use a library call that reverts on failure
+
+  ERROR    tx-origin-auth              examples/messy/contracts/ClubVault.sol:52
+           tx.origin decides who may act in function sweep of ClubVault; a contract the account calls can pass this check in its name
+           fix: check msg.sender instead, with an owner or a role, such as require(msg.sender == owner)
+
+  ERROR    delegatecall-untrusted      examples/messy/contracts/upgradeable/ClubVaultV2.sol:33
+           delegatecall to target, a parameter of function execute of ClubVaultV2: the caller picks the code that runs with the storage and the balance of this contract
+           fix: delegatecall only to a constant or immutable address, or check the target against a list of trusted addresses that only an authorized party can change
+
+  ERROR    unchecked-call              examples/messy/contracts/upgradeable/ClubVaultV2.sol:39
+           the success value of .delegatecall in function runPlugin of ClubVaultV2 is left out of the tuple, so a failed call goes on as if it worked
+           fix: check the success value, such as (bool ok, ) = to.call{value: amount}(""); require(ok, "transfer failed");, or use a library call that reverts on failure
+
+  ERROR    delegatecall-untrusted      examples/messy/contracts/upgradeable/ClubVaultV2.sol:39
+           delegatecall to plugin, a state variable in function runPlugin of ClubVaultV2: whoever can change plugin picks the code that runs with the storage and the balance of this contract
+           fix: delegatecall only to a constant or immutable address, or check the target against a list of trusted addresses that only an authorized party can change
+
+  WARNING  floating-pragma             examples/messy/contracts/ClubVault.sol:2
+           pragma solidity ^0.8.19 admits more than one compiler version, from 0.8.19 on; the file may be built with a version it was not tested with
+           fix: pin the version the contracts were tested with, such as pragma solidity 0.8.24;, and check the list of known compiler bugs for it
+
+  WARNING  old-compiler                examples/messy/contracts/ClubVault.sol:2
+           pragma solidity ^0.8.19 admits 0.8.19, below the minimum 0.8.20
+           fix: move the code to a recent 0.8 compiler and pin it; below 0.8.0, guard every arithmetic operation with checked arithmetic
+
+  WARNING  state-write-after-call      examples/messy/contracts/ClubVault.sol:40
+           function withdraw of ClubVault writes balances at line 40 after the external call .call at line 38; a contract it calls can enter again before the write
+           fix: follow Checks-Effects-Interactions: make every change of state before the external call, or guard the function with a reentrancy lock such as nonReentrant
+
+  WARNING  admin-change-without-event  examples/messy/contracts/ClubVault.sol:61
+           function setOwner of ClubVault changes owner and emits no event, so a change of who controls the contract leaves no log
+           fix: emit an event with the old and the new value, such as OwnershipTransferred(previousOwner, newOwner), in the function that makes the change
+
+  WARNING  unbounded-loop              examples/messy/contracts/ClubVault.sol:69
+           the for loop in function payAll of ClubVault runs to members.length, an array in storage that can keep growing
+           fix: bound the work of one call: process the array in pages with a start and a count, let each party pull its own share, or cap the length of the array
+
+  WARNING  selfdestruct                examples/messy/contracts/ClubVault.sol:90
+           selfdestruct in function closeClub of ClubVault
+           fix: remove selfdestruct: it is deprecated, it no longer removes the code on most networks, and in an implementation behind a proxy it can break every proxy; send the balance out with a guarded withdrawal instead
+
+  WARNING  floating-pragma             examples/messy/contracts/RaffleDraw.sol:2
+           pragma solidity >=0.7.0 <0.9.0 admits more than one compiler version, from 0.7.0 on; the file may be built with a version it was not tested with
+           fix: pin the version the contracts were tested with, such as pragma solidity 0.8.24;, and check the list of known compiler bugs for it
+
+  WARNING  old-compiler                examples/messy/contracts/RaffleDraw.sol:2
+           pragma solidity >=0.7.0 <0.9.0 admits 0.7.0, below the minimum 0.8.20; before 0.8.0, arithmetic wraps on overflow and underflow with no revert
+           fix: move the code to a recent 0.8 compiler and pin it; below 0.8.0, guard every arithmetic operation with checked arithmetic
+
+  WARNING  weak-randomness             examples/messy/contracts/RaffleDraw.sol:22
+           block.timestamp goes into keccak256 in function drawWinner of RaffleDraw; the proposer of the block can see and sway the value
+           fix: use a verifiable source of randomness, such as a randomness oracle with proofs or a commit and reveal scheme, and never a value the block proposer can see or choose
+
+  WARNING  ecrecover-unchecked         examples/messy/contracts/RaffleDraw.sol:28
+           ecrecover in function claim of RaffleDraw: the result is not compared with address(0), which ecrecover returns for a signature it cannot read; s is not limited to the lower half of the curve order, so a second valid signature can be made from the first
+           fix: use a reviewed library such as ECDSA.recover of OpenZeppelin, which rejects address(0) and the upper range of s, and never use a signature itself as the key of a processed message
+
+  WARNING  upgradeable-initializer     examples/messy/contracts/upgradeable/ClubVaultV2.sol:8
+           contract ClubVaultV2 inherits Initializable and has no constructor that calls _disableInitializers(), so anyone can initialize its implementation
+           fix: add a constructor that calls _disableInitializers(), mark initialize with the initializer modifier and the initializers of parent contracts with onlyInitializing, and guard _authorizeUpgrade with onlyOwner or a role
+
+  WARNING  upgradeable-initializer     examples/messy/contracts/upgradeable/ClubVaultV2.sol:15
+           external function initialize of ClubVaultV2 has no initializer or reinitializer modifier, so it can be called again
+           fix: add a constructor that calls _disableInitializers(), mark initialize with the initializer modifier and the initializers of parent contracts with onlyInitializing, and guard _authorizeUpgrade with onlyOwner or a role
+
+  WARNING  upgradeable-initializer     examples/messy/contracts/upgradeable/ClubVaultV2.sol:43
+           function _authorizeUpgrade of ClubVaultV2 has no access control modifier and no check of msg.sender, so anyone can upgrade the contract
+           fix: add a constructor that calls _disableInitializers(), mark initialize with the initializer modifier and the initializers of parent contracts with onlyInitializing, and guard _authorizeUpgrade with onlyOwner or a role
+
+  INFO     hardcoded-address           examples/messy/contracts/ClubVault.sol:12
+           the address 0x4242424242424242424242424242424242424242 is written into the code in contract ClubVault; it differs from chain to chain and cannot be changed after the deployment
+           fix: pass the address to the constructor or the initializer and keep it in an immutable or a guarded variable, or name it in one constant with a comment that says which chain it belongs to
+
+  INFO     missing-access-control      examples/messy/contracts/ClubVault.sol:65
+           external function setFeeCollector of ClubVault changes feeCollector with no access control modifier and no check of msg.sender
+           fix: guard the function with an access control modifier such as onlyOwner or onlyRole, or check msg.sender at its start; if it is open on purpose, say so in a comment for the review
+
+  INFO     unchecked-block             examples/messy/contracts/ClubVault.sol:77
+           an unchecked block in function sum of ClubVault; arithmetic inside it wraps on overflow and underflow with no revert
+           fix: keep in an unchecked block only arithmetic whose bounds are checked just before it, and say why in a comment
+
+  INFO     inline-assembly             examples/messy/contracts/ClubVault.sol:84
+           an assembly block in function readSlot of ClubVault; the type checker and the safety checks of Solidity do not reach inside it
+           fix: keep assembly small and commented, test it on its own, and ask the review to read it line by line
+
+  INFO     missing-access-control      examples/messy/contracts/upgradeable/ClubVaultV2.sol:38
+           external function runPlugin of ClubVaultV2 uses delegatecall with no access control modifier and no check of msg.sender
+           fix: guard the function with an access control modifier such as onlyOwner or onlyRole, or check msg.sender at its start; if it is open on purpose, say so in a comment for the review
+
+note: 2 paths matching lib/**, out/**, cache/**, artifacts/** and mocks/** are left out
+note: 1 folder named .git or node_modules is passed over
+
+This check reads the Solidity files on disk as text and compiles nothing, runs nothing and fetches nothing; the checks are a heuristic. A finding is a lead with a file and a line for a smart contract review before an audit, and a clean result is not a security audit and not a guarantee that the contracts are safe (docs/limits.md).
+
+RESULT: FAIL - 5 findings at or above error (5 error, 13 warning, 5 info)
