@@ -1,0 +1,50 @@
+{
+  "name": "solidity-pattern-check",
+  "version": "1.0.0",
+  "description": "Solidity pattern check: reads the Solidity files of a project as text, compiles nothing and runs nothing, and lists risky smart contract patterns with file, line and column as an input to a smart contract review before an audit: floating or missing pragmas, old compilers, tx.origin used for authorization, unchecked low-level calls, delegatecall to a parameter or to storage, selfdestruct, block values used as randomness, state writes after external calls, admin changes with no event, sensitive functions with no access control in sight, upgradeable contracts whose initialization is not locked, loops over dynamic storage arrays, ecrecover with no checks, inline assembly, unchecked blocks and hard-coded addresses. Text, JSON, CSV and GitHub annotation output, exit codes for a pipeline, no dependencies.",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "bin": {
+    "solidity-pattern-check": "bin/solidity-pattern-check.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "docs",
+    "examples",
+    "research",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "test": "node --test \"test/*.test.js\"",
+    "test:coverage": "node --test --experimental-test-coverage \"test/*.test.js\"",
+    "check": "node tools/check.mjs",
+    "example": "node tools/example.mjs"
+  },
+  "keywords": [
+    "solidity",
+    "smart-contracts",
+    "ethereum",
+    "blockchain",
+    "security",
+    "static-analysis",
+    "code-review",
+    "evm",
+    "swc",
+    "cli"
+  ],
+  "author": "INNERLUXES <info@innerluxes.dev>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/INNERLUXES/solidity-pattern-check.git"
+  },
+  "homepage": "https://innerluxes.dev/blockchain/development"
+}

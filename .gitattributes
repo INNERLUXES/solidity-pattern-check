@@ -1,0 +1,12 @@
+* text=auto eol=lf
+# The example contracts and the configuration are kept byte for byte as written, so a test can read them with LF and
+# with CRLF line ends and as UTF-16.
+examples/clean/** -text
+examples/messy/** -text
+examples/config.json -text
+# The example output is kept as the tool writes it; the CSV report ends its records with CRLF, as RFC 4180 writes.
+examples/output/** -text
+# The Solidity files of the examples are made-up input, not code of this project.
+examples/** linguist-documentation
+examples/** linguist-detectable=false
+examples/** linguist-vendored
