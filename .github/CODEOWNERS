@@ -1,0 +1,22 @@
+# Every change is reviewed by a maintainer.
+* @innerluxesdev
+
+# The listing of the folder, the reading of files, the lexer, the outline, the version pragma, the checks, the tables of
+# names, the patterns, the points of the public pages, the configuration and the output decide every result and what
+# is read from the disk; changes need extra care.
+/src/walk.js @innerluxesdev
+/src/files.js @innerluxesdev
+/src/lexer.js @innerluxesdev
+/src/outline.js @innerluxesdev
+/src/version.js @innerluxesdev
+/src/analyze.js @innerluxesdev
+/src/glob.js @innerluxesdev
+/src/json.js @innerluxesdev
+/src/data.js @innerluxesdev
+/src/defaults.js @innerluxesdev
+/research/ @innerluxesdev
+/src/csv.js @innerluxesdev
+/src/config.js @innerluxesdev
+/src/rules.js @innerluxesdev
+/src/check.js @innerluxesdev
+/src/report.js @innerluxesdev
